@@ -1,0 +1,94 @@
+.heading{
+
+    font-size: 40px;
+    margin-left: 20px;
+    text-align: center;
+     color: white;
+}
+
+
+.userinfo
+{
+
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    margin-right: 20px;
+
+}
+
+.logoutbtn{
+    padding: 10px 20px;
+    background-color: red;
+    border: 1px solid red;
+    color: white;
+    width: 60%;
+    cursor: pointer;
+
+}
+
+h3{
+    text-align: center;
+
+}
+
+.selectFile{
+    margin-left: 40%;
+}
+
+.header{
+   background-color: green;
+   display: flex;
+   justify-content: space-between;
+}
+
+.uploadbtn{
+    background-color: green;
+    padding: 10px 20px;
+    border: 1px solid green;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+
+}
+
+.getFilesbtn{
+    padding: 10px 20px;
+    background-color: green;
+    border: 1px solid green;
+    color: white;
+    font-size: 15px;
+    margin-top: 50px;
+    margin-left: 45%;
+    cursor: pointer;
+}
+
+
+.table {
+    width: 100%;
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+    
+  table {
+    border: 2px solid forestgreen;
+    width: 100%;
+    height: min-content;
+  }
+    
+  th {
+    border-bottom: 1px solid black;
+  }
+    
+  td {
+    text-align: center;
+  }
+
+  .downloadbtn{
+    background-color: green;
+    border: 1px solid green;
+    color: white;
+    cursor: pointer;
+  }

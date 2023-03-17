@@ -1,0 +1,23 @@
+
+.btn{
+
+    padding: 20px 20px;
+    margin-left: 42%;
+    margin-top: 40px;
+    border: 1px solid red;
+    background-color: red;
+    text-align: center;
+    font-weight: bold;
+    color: white;
+    font-size: 20px;
+}
+
+.notreg{
+
+    margin-top: 30px;
+    margin-left: 42%;
+}
+
+.head{
+   text-align: center;
+}
