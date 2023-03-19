@@ -64,7 +64,7 @@ app.post("/uploadfile", upload.single("file"), protect, async (req, res) => {
   var file = req.file;
 
   try {
-    const uploadImage = (file) => {
+    const uploadFile = (file) => {
       const fileStream = fs.createReadStream(file.path);
 
       const params = {
@@ -75,7 +75,7 @@ app.post("/uploadfile", upload.single("file"), protect, async (req, res) => {
 
       s3.upload(params, () => {});
     };
-    uploadImage(file);
+    uploadFile(file);
     res.send(200);
   } catch (err) {
     res.send(400).json({
