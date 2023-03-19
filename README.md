@@ -45,6 +45,17 @@ Welcome to AWSFileApp, the ultimate solution for storing your files securely in 
 
 ## Run 
 
+Clone the project
+
+```bash
+  git clone https://github.com/sarang721/AWSFileApp
+```
+Go to the project directory
+
+```bash
+  cd AWSFileApp
+```
+
 Install dependencies
 
 ```bash
