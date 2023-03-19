@@ -1,183 +1,113 @@
-const express = require("express")
-const mongoose = require('mongoose')
-const cors = require('cors')
-const userRoutes = require("./routes/userRoutes")
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const userRoutes = require("./routes/userRoutes");
 const app = express();
-const dotenv = require('dotenv')
-const protect=require('./authMiddleware.js');
-const User=require('./models/user');
-const multer = require('multer');
-const randomstring = require("randomstring");
-const AWS=require('aws-sdk');
-const fs=require('fs');
+const protect = require("./authMiddleware.js");
+const multer = require("multer");
+const AWS = require("aws-sdk");
+const fs = require("fs");
+const upload = multer({ dest: "uploads/" });
+const path = require("path");
+const os = require("os");
 
-require('dotenv').config()
+require("dotenv").config();
 
 AWS.config.update({
-    secretAccessKey:process.env.SECRET_KEY_ACCESS,
-    accessKeyId: process.env.ACCESS_KEY,
-   
-
+  secretAccessKey: process.env.SECRET_KEY_ACCESS,
+  accessKeyId: process.env.ACCESS_KEY,
 });
 
 const s3 = new AWS.S3();
 
-const connectDB=async()=>{
-
-    try{
-
-        const conn=await mongoose.connect(process.env.MONGO_URL,{
-            useUnifiedTopology:true,
-            useNewUrlParser:true
-        })
-
-        console.log("DB connected");
-    }
-
-    catch(e){
-
-        console.log(e);
-        process.exit(1);
-
-    }
-
-
-}
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URL, {
+      useUnifiedTopology: true,
+      useNewUrlParser: true,
+    });
+    console.log("DB connected");
+  } catch (e) {
+    console.log("Failed to connect to MongoDB, error ", e);
+    process.exit(1);
+  }
+};
 
 connectDB();
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 
 app.use("/users", userRoutes);
 
-app.get('/getfiles',protect,async(req,res)=>{
+app.get("/getfiles", protect, async (req, res) => {
+  try {
+    const files = await s3
+      .listObjectsV2({
+        Bucket: process.env.BUCKET_NAME,
+        Prefix: `${req.user._id}/`,
+      })
+      .promise();
 
-    const user=await User.find({_id:req.user._id});
-    const bucket_name=user[0].bucket_name;
-
-
-    const files=await s3.listObjectsV2({Bucket:bucket_name}).promise();
-    //console.log(files.Contents);
-    const names=files.Contents.map((item)=>item.Key);
+    var names = files.Contents.map((item) =>
+      item.Key.toString().substring(item.Key.toString().indexOf("/") + 1)
+    );
+    names = names.filter((val) => val.length > 0);
     res.send(names);
-    
-})  
+  } catch (err) {
+    res.send(400).json({
+      message: "Error Occured while getting files",
+    });
+  }
+});
 
+app.post("/uploadfile", upload.single("file"), protect, async (req, res) => {
+  var file = req.file;
 
-const putbucketCors=async(bucketname)=>{
-   await s3.putBucketCors(
-        {
-         Bucket: bucketname,
-         CORSConfiguration: {
-          CORSRules: [
-            {
-                AllowedHeaders: [
-                    "*"
-                ],
-                AllowedMethods: [
-                    "GET",
-                    "PUT",
-                    "POST",
-                    "DELETE"
-                ],
-                AllowedOrigins: [
-                    "*"
-                ],
-                ExposeHeaders: [
-                    "x-amz-server-side-encryption",
-                    "x-amz-request-id",
-                    "x-amz-id-2"
-                ],
-                MaxAgeSeconds: 3000
-            }
-          ]
-         }
-        },
-        err => {
-         if (err) console.log(err, err.stack);
-         else console.log(`Edit Bucket CORS succeed!`);
-        }
-    )
-}
+  try {
+    const uploadImage = (file) => {
+      const fileStream = fs.createReadStream(file.path);
 
-const updateDocument=async(id)=>{
+      const params = {
+        Bucket: process.env.BUCKET_NAME,
+        Key: `${req.user._id}/${file.originalname}`,
+        Body: fileStream,
+      };
 
-    const bucketName=randomstring.generate({
-        length: 12,
-        charset: 'abcdefghijklmnopqrstuvwxyz'
-        });   
-        
-        
-        const params={
-            Bucket:bucketName
-        }
+      s3.upload(params, () => {});
+    };
+    uploadImage(file);
+    res.send(200);
+  } catch (err) {
+    res.send(400).json({
+      message: "Problem Occured while Uploading",
+    });
+  }
+});
 
+app.post("/download", protect, async (req, res) => {
+  try {
+    const filename = req.body.filename;
 
-        try{
-        const promise=await User.updateOne({_id:id},{
+    console.log("Trying to download file", filename);
 
-            $set:{
-                bucket:true,
-                bucket_name:bucketName
-            }
-        })
-        }
-        catch(err)
-        {
-            return res.status(500).send();
-        }
-        try{
-        await s3.createBucket(params,(err,data )=>{
-                    if(err)
-                    {
-                        console.log(err);
-                    }
-                    else{
-                        console.log("Bucket created");
-                    }
-                })
+    const params = {
+      Bucket: process.env.BUCKET_NAME,
+      Key: `${req.user._id}/${filename}`,
+    };
+    let readStream = s3.getObject(params).createReadStream();
+    let writeStream = fs.createWriteStream(
+      path.join(`${os.homedir()}\\Desktop\\S3Downloads`, filename)
+    );
+    readStream.pipe(writeStream);
 
-            }
-            catch(err)
-            {
-                return res.status(500).send();
-            }
+    res.send(`File Downloaded to ${os.homedir()}\\Desktop\\S3Downloads`);
+  } catch (err) {
+    res.send(400).json({
+      message: "Error occured while downloading",
+    });
+  }
+});
 
-}
-
-app.get("/uploadfile",protect,async(req,res)=>{
-    const user=await User.find({_id:req.user._id});
-    if(user[0].bucket==false){
-    updateDocument(req.user._id);
-    
-    }
-    putbucketCors(user[0].bucket_name);
-  
-    res.json({
-        "bucket_name":user[0].bucket_name
-    })
-    
-
-})
-
-
-
-app.post("/download",protect,async(req,res)=>{
-    const user=await User.find({_id:req.user._id});
-    const bucket_name=user[0].bucket;
-    const fileName=req.body;
-
-    let x=s3.getObject({Bucket:bucket_name}).promise();
-    console.log(x.body);
-    res.send(x.body);
-
-})
-
-app.listen(5000,()=>{
-    console.log("Server running");
-  })
-  
-
-
-
-
+app.listen(5000, () => {
+  console.log("Server running");
+});
