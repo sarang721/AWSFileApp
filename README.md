@@ -80,19 +80,19 @@ Start the frontend
 
 To run this project, you will need to add the following environment variables to your .env file
 
-`CLIENT_ID`
+`CLIENT_ID - Unique identifier assigned to a client or application.`
 
-`CLIENT_SECRET`
+`CLIENT_SECRET - Confidential key or token used for authentication and authorization`
 
-`JWT_SECRET`
+`JWT_SECRET- Secret key used for signing and verifying JSON Web Tokens (JWTs) `
 
-`ACCESS_KEY`
+`ACCESS_KEY - Security credential used for programmatic access to AWS services `
 
-`SECRET_KEY_ACCESS`
+`SECRET_KEY_ACCESS - Secret security credential used for programmatic access to AWS services`
 
-`MONGO_URL`
+`MONGO_URL - URL or connection string used to connect to a MongoDB database.`
 
-`BUCKET_NAME`
+`BUCKET_NAME - Name of an S3 bucket, which is a storage service used for storing and retrieving objects`
 
 
 
