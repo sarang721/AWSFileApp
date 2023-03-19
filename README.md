@@ -3,6 +3,7 @@
 
 Welcome to AWSFileApp, the ultimate solution for storing your files securely in the cloud! AWSFileApp app allows you to easily sign up and log in using your Google account.Once you're in, you can start uploading files to Amazon S3 bucket with just a few clicks. You can also list all your uploaded files and download . The bucket to which files are uploaded are fully private and only root user can access that.
 
+<img width="954" alt="Screenshot 2023-03-17 194749" src="https://user-images.githubusercontent.com/63876450/226199336-f67daa3b-09a5-417b-a4be-17fb7247dbc2.png">
 
 ## API Reference
 
