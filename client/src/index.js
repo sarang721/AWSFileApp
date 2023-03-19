@@ -3,7 +3,6 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./global.css";
-
 import { Provider } from "react-redux";
 import { reducers } from "./redux/reducers";
 import thunk from "redux-thunk";

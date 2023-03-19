@@ -12,7 +12,6 @@ function Profile(props) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [files, setFiles] = useState([]);
   const navigate = useNavigate();
-
   const [authenticated, setAuthenticated] = useState(false);
 
   const getFiles = async () => {
@@ -81,7 +80,6 @@ function Profile(props) {
 
   function handleLogOut(e) {
     e.preventDefault();
-
     dispatch({ type: "LOGOUT" });
     navigate("/");
   }
@@ -93,7 +91,6 @@ function Profile(props) {
           <div>
             <div className="header">
               <h3 className="heading">FileApp</h3>
-
               <div>
                 <div>
                   <h1 className="userinfo">
@@ -106,25 +103,20 @@ function Profile(props) {
                 </div>
               </div>
             </div>
-
             <div className="selectFile">
               <h2>Select File to Upload</h2>
-
               <input type="file" onChange={handleFileInput}></input>
               <button
                 className="uploadbtn"
                 disabled={!selectedFile}
-                onClick={uploadToCloud}
-              >
+                onClick={uploadToCloud}>
                 Upload
               </button>
             </div>
-
             <div>
               <button className="getFilesbtn" onClick={getFiles}>
                 Get Files
               </button>
-
               <div className="table">
                 <table>
                   <tr>
@@ -132,7 +124,6 @@ function Profile(props) {
                     <th>Name</th>
                     <th>Download</th>
                   </tr>
-
                   {files.size == 0 ? (
                     <h2>No Files</h2>
                   ) : (
@@ -144,8 +135,7 @@ function Profile(props) {
                           <td>
                             <button
                               className="downloadbtn"
-                              onClick={() => downloadfile(val)}
-                            >
+                              onClick={() => downloadfile(val)}>
                               Download
                             </button>
                           </td>
